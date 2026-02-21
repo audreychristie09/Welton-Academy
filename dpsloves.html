@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en"> 
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welton Academy - Dead Poets Society</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Courier+Prime&family=Homemade+Apple&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --paper: #f4e4bc;
+            --dark-wood: #2c241b;
+            --ink: #1a1a1a;
+            --maroon: #581818;
+            --gold: #c5a059;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; scroll-behavior: smooth; }
+
+        body
+              {
+            background-color: var(--dark-wood);
+            color: var(--paper);
+            font-family: 'Courier Prime', monospace;
+            overflow-x: hidden;
+        }
+
+        /* --- LAYOUT CONTROLLER --- */
+        .page { display: none; min-height: 100vh; }
+        .active-page { display: block; }
+
+        /* --- LOGIN & REGISTER STYLE --- */
+        .login-bg {
+            background-image: url('https://www.transparenttextures.com/patterns/aged-paper.png'), linear-gradient(to bottom, #1a1a1a, #2c241b);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .paper-card {
+            background-color: var(--paper);
+            background-image: url('https://www.transparenttextures.com/patterns/paper-fibers.png');
+            color: var(--ink);
+            padding: 30px;
+            width: 100%;
+            max-width: 400px;
+            border: 1px solid var(--gold);
+            box-shadow: 0 0 50px rgba(0,0,0,0.8);
+            position: relative;
+            transform: rotate(-1deg);
+        }
+
+        .dps-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.5rem;
+            text-align: center;
+            border-bottom: 2px solid var(--ink);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid var(--ink);
+            font-family: 'Courier Prime', monospace;
+            font-size: 0.9rem;
+            outline: none;
+            color: var(--ink);
+        }
+
+        .btn-vintage {
+            width: 100%;
+            margin-top: 20px;
+            padding: 12px;
+            background: var(--maroon);
+            color: var(--paper);
+            border: none;
+            font-family: 'Cinzel', serif;
+            cursor: pointer;
+            transition: 0.3s;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .btn-vintage:hover { background: var(--ink); }
+        .link-text { display: block; margin-top: 15px; text-align: center; font-size: 0.8rem; cursor: pointer; text-decoration: underline; }
+        #error-msg { color: var(--maroon); font-size: 0.8rem; display: none; margin-top: 10px; text-align: center; font-weight: bold; }
+
+        /* --- NAVBAR --- */
+        .navbar {
+            display: flex; flex-direction: column; align-items: center;
+            padding: 15px; background: rgba(26, 26, 26, 0.95);
+            position: sticky; top: 0; z-index: 100;
+            border-bottom: 1px solid var(--gold);
+        }
+
+        .logo { font-family: 'Cinzel', serif; font-size: 1.1rem; color: var(--gold); margin-bottom: 10px; }
+        .nav-links { list-style: none; display: flex; gap: 15px; }
+        .nav-links a { text-decoration: none; color: var(--paper); font-family: 'Cinzel', serif; font-size: 0.7rem; letter-spacing: 1px; }
+        .nav-links a:hover { color: var(--gold); }
+
+        /* --- CONTENT --- */
+        .hero-section {
+            height: 50vh; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; text-align: center;
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1464692805480-a69dfaafdb0d?q=80&w=1000') no-repeat center/cover;
+        }
+        .handwriting { font-family: 'Homemade Apple', cursive; font-size: 2.2rem; color: var(--gold); margin-bottom: 10px; }
+
+        .content-section { padding: 30px 20px; display: flex; flex-direction: column; align-items: center; gap: 30px; }
+        .paper-sheet {
+            background: var(--paper); color: var(--ink);
+            padding: 25px; width: 100%; max-width: 600px;
+            box-shadow: 8px 8px 0px rgba(0,0,0,0.5);
+        }
+
+        .polaroid-frame {
+            background: white; padding: 10px 10px 35px 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            margin: 20px 0; transform: rotate(2deg);
+        }
+        .polaroid-frame img { width: 100%; max-width: 250px; filter: sepia(0.4); }
+        .polaroid-caption { font-family: 'Homemade Apple', cursive; color: #333; text-align: center; margin-top: 10px; font-size: 0.9rem; }
+
+        blockquote { font-style: italic; border-left: 3px solid var(--maroon); padding-left: 15px; margin: 20px 0; color: var(--maroon); }
+
+        /* --- FOOTER --- */
+        footer { text-align: center; padding: 30px; font-size: 0.7rem; opacity: 0.6; }
+    </style>
+</head>
+<body>
+    
+    <div id="login-page" class="page active-page">
+        <div class="login-bg">
+            <div class="paper-card">
+                <h2 class="dps-title">Welton Academy</h2>
+                <input type="text" id="login-user" placeholder="Username" required>
+                <input type="password" id="login-pass" placeholder="Password" required>
+                <button class="btn-vintage" onclick="handleLogin()">Enter</button>
+                <p id="error-msg">Access Denied. Try again, scholar.</p>
+                <span class="link-text" onclick="showPage('register-page')">Apply for Enrollment</span>
+            </div>
+        </div>
+    </div>
+
+    <div id="register-page" class="page">
+        <div class="login-bg">
+            <div class="paper-card" style="transform: rotate(1deg);">
+                <h2 class="dps-title">New Enrollment</h2>
+                <input type="text" id="reg-name" placeholder="Full Name">
+                <select id="reg-gender">
+                    <option value="" disabled selected>Select Gender</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                </select>
+                <input type="email" id="reg-email" placeholder="Email Address">
+                <input type="text" id="reg-phone" placeholder="Phone Number">
+                <input type="text" id="reg-user" placeholder="Username">
+                <input type="password" id="reg-pass" placeholder="Password">
+                <button class="btn-vintage" onclick="handleRegister()">Submit Application</button>
+                <span class="link-text" onclick="showPage('login-page')">Already Enrolled? Login</span>
+            </div>
+        </div>
+    </div>
+
+    <div id="main-content" class="page">
+        <nav class="navbar">
+            <div class="logo">O Captain! My Captain!</div>
+            <ul class="nav-links">
+                <li><a href="#" onclick="showSection('home')">Home</a></li>
+                <li><a href="#" onclick="showSection('explore')">Explore</a></li>
+                <li><a href="#" onclick="showSection('profile')">Profile</a></li>
+                <li><a href="#" onclick="logout()">Logout</a></li>
+            </ul>
+        </nav>
+
+        <section id="sec-home" class="sub-section">
+            <header class="hero-section">
+                <div class="hero-text">
+                    <h1 class="handwriting">Carpe Diem</h1>
+                    <p>Seize the day, make your lives extraordinary.</p>
+                </div>
+            </header>
+            <div class="content-section">
+                <div class="paper-sheet">
+                    <h3>The Poet's Creed</h3>
+                    <p style="margin-top:10px;">To suck the marrow out of life does not mean to choke on the bone. We gather to celebrate the power of words and the beauty of the human soul.</p>
+                    <blockquote>"Medicine, law, business, engineering, these are noble pursuits and necessary to sustain life. But poetry, beauty, romance, love, these are what we stay alive for."</blockquote>
+                </div>
+            </div>
+        </section>
+
+        <section id="sec-explore" class="sub-section" style="display:none;">
+            <div class="content-section">
+                <h2 class="dps-title" style="color:var(--gold); border-bottom:1px solid var(--gold)">The Society Gallery</h2>
+                <div class="polaroid-frame">
+                    <img src="https://i.pinimg.com/736x/21/2b/9d/212b9d628876f10c144b678c48052327.jpg" alt="Neil Perry">
+                    <div class="polaroid-caption">Neil Perry</div>
+                </div>
+                <div class="polaroid-frame" style="transform: rotate(-3deg);">
+                    <img src="https://i.pinimg.com/736x/8f/30/26/8f302604944f836594255554f6762391.jpg" alt="Todd Anderson">
+                    <div class="polaroid-caption">Todd Anderson</div>
+                </div>
+            </div>
+        </section>
+
+        <section id="sec-profile" class="sub-section" style="display:none;">
+            <div class="content-section">
+                <div class="paper-sheet">
+                    <h3 id="display-name">Student Profile</h3>
+                    <hr style="margin: 15px 0;">
+                    <p><strong>Status:</strong> Member of the Society</p>
+                    <p><strong>Academy:</strong> Welton Academy</p>
+                    <p id="display-user"><strong>Username:</strong> </p>
+                    <p id="display-email"><strong>Email:</strong> </p>
+                    <button class="btn-vintage" style="font-size: 0.7rem;" onclick="logout()">Sign Out of Ledger</button>
+                </div>
+            </div>
+        </section>
+
+        <footer>
+            Welton Academy Archives &copy; 1959
+        </footer>
+    </div>
+
+    <script>
+        const adminData = { user: "Audrey", pass: "dpslover101", name: "Captain Audrey" };
+
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active-page'));
+            document.getElementById(pageId).classList.add('active-page');
+            window.scrollTo(0,0);
+        }
+
+        function showSection(secId) {
+            document.querySelectorAll('.sub-section').forEach(s => s.style.display = 'none');
+            document.getElementById('sec-' + secId).style.display = 'block';
+        }
+
+        function handleLogin() {
+            const u = document.getElementById('login-user').value;
+            const p = document.getElementById('login-pass').value;
+            
+            if(u === adminData.user && p === adminData.pass) {
+                loadProfile(adminData.name, adminData.user, "admin@welton.edu");
+                showPage('main-content');
+            } else if (u === localStorage.getItem('gUser') && p === localStorage.getItem('gPass') && u !== "") {
+                loadProfile(localStorage.getItem('gName'), u, localStorage.getItem('gEmail'));
+                showPage('main-content');
+            } else {
+                document.getElementById('error-msg').style.display = 'block';
+            }
+        }
+
+        function handleRegister() {
+            const name = document.getElementById('reg-name').value;
+            const user = document.getElementById('reg-user').value;
+            const pass = document.getElementById('reg-pass').value;
+            const email = document.getElementById('reg-email').value;
+
+            if(name && user && pass) {
+                localStorage.setItem('gName', name);
+                localStorage.setItem('gUser', user);
+                localStorage.setItem('gPass', pass);
+                localStorage.setItem('gEmail', email);
+                alert("Enrollment Successful!");
+                showPage('login-page');
+            } else {
+                alert("Please complete the form.");
+            }
+        }
+
+        function loadProfile(name, user, email) {
+            document.getElementById('display-name').innerText = name;
+            document.getElementById('display-user').innerHTML = "<strong>Username:</strong> " + user;
+            document.getElementById('display-email').innerHTML = "<strong>Email:</strong> " + email;
+        }
+
+        function logout() {
+            location.reload();
+        }
+    </script>
+</body>
+</html>
